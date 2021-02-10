@@ -1,0 +1,10 @@
+[package]
+name = "grapeTimerR"
+version = "0.1.0"
+authors = ["jackliu100@gmail.com <jackliu100@gmail.com>"]
+edition = "2018"
+description = "grape "
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[dependencies]
+chrono = "0.4.19"
