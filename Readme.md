@@ -68,13 +68,69 @@ let next_dayTimeUtc = parsers::parser_timestampUtc("Day 05::00:00").unwrap();
 **add ticker**
 
 ```rust
-
+    fn executer_task(id:u64) {
+        println!("on function mode:{}",chrono::Local::now().to_rfc2822());
+    }
+    // 使用函数方式执行代码 Use function to execute code
+    timer::spwan_ticker(time::Duration::from_millis(5000),2,executer_task);
+    // 使用闭包模式 Use closure function
+    timer::spwan_ticker(time::Duration::from_millis(5000),2,|x| {
+        println!("on ticker:{}",chrono::Local::now().to_rfc2822());
+    });
 ```
 
 **add ticker by trait mode**
 
 ```rust
+struct ExempleAction {}
 
+// 首先我们定义一个结构体
+//First we define a struct
+impl TaskAction for ExempleAction {
+    // 实际执行的代码段
+    // Code snippet executed
+    fn execute(&self, id: u64) {
+        println!("on trait struct:{}",chrono::Local::now().to_rfc2822());
+    }
+
+    // 不使用的话，返回一个空字符串
+    // If not used, return an empty string,like ""
+    fn date_format(&self) -> &str {
+        return ""
+    }
+
+    // 如果你不使用date_format，就必须使用这个参数，否则异常。
+    // If you don't use date_format, you must use this parameter, otherwise it is panic.
+    // 时间单位 毫秒 ，time unit is millisecond
+    fn tick(&self) -> u64 {
+        return 5000;
+    }
+
+    // 这里需要自定义ID或将其设置为一个组的ID，所以停止任务会停止这个组
+    // Here you need to customize the ID or set it to the GroupId or TaskType Id,
+    // so stopping the task will stop the group
+    fn id(&self) -> u64 {
+        return 18888;
+    }
+
+    // 循环的次数
+    fn loop_count(&self) -> i32 {
+       return 15;
+    }
+}
+
+    // 使用trait任务，可以简化部分实际逻辑
+    // Using trait tasks can simplify part of the actual logic
+    timer::spwan_trait(Arc::new(ExempleAction{}));
+
+```
+
+**add date**
+
+```rust
+timer::spwan_date("day 19:21:50",1,|id| {
+    println!("on date:{}",chrono::Local::now().to_rfc2822());
+});
 ```
 
 ## **鸣谢(Thanks)**

@@ -158,9 +158,9 @@ pub mod timer {
     /// }
     ///    // 使用trait任务，可以简化部分实际逻辑
     ///    // Using trait tasks can simplify part of the actual logic
-    ///    timer::spwan_ticker_trait(Arc::new(ExempleAction{}));
+    ///    timer::spwan_trait(Arc::new(ExempleAction{}));
     /// ```
-    pub fn spwan_ticker_trait(ft:Arc<dyn TaskAction>) -> TResult<u64> {
+    pub fn spwan_trait(ft:Arc<dyn TaskAction>) -> TResult<u64> {
         let r = Inter.thread_pool.lock();
         match r {
             Err(e) => { Err(TError::new(TErrorKind::Other(e.to_string()))) },
