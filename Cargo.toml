@@ -5,7 +5,7 @@ authors = ["jackliu100@gmail.com <jackliu100@gmail.com>"]
 edition = "2018"
 description = "grape schedule for rust"
 license = "Apache-2.0"
-license-file = "https://github.com/koangel/grapeTimerR/blob/main/LICENSE"
+license-file = "LICENSE"
 repository = "https://github.com/koangel/grapeTimerR"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
