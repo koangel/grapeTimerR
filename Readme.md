@@ -8,6 +8,8 @@
 ```
 [![made-with-Rust](https://img.shields.io/badge/made%20with-rust-red)](https://www.rust-lang.org/)
 [![Open Source Love svg2](https://badges.frapsoft.com/os/v2/open-source.svg?v=103)](https://github.com/ellerbrock/open-source-badges/)
+[![crates.io](https://img.shields.io/badge/crates.io-0.1.0-orange.svg)](https://crates.io/crates/grapeTimerR)
+[![docs.rs](https://img.shields.io/badge/docs-0.1.0-blue.svg)](https://docs.rs/crate/grapeTimerR/0.1.0)
 
 ## **简介 Intro**
 
