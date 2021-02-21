@@ -8,6 +8,7 @@ pub mod errors {
         DateOverflow,
         WeekDay,
         AllocTickerError,
+        MutexError,
         Other(String),
     }
 
@@ -25,6 +26,7 @@ pub mod errors {
                 TErrorKind::DateOverflow => {  String::from("error,Date overflow...") }
                 TErrorKind::WeekDay => { String::from("error,bad week day...") }
                 TErrorKind::AllocTickerError  => { String::from("bad alloc ticker...") }
+                    TErrorKind::MutexError => { String::from("get mutex lock error...") }
                 TErrorKind::Other(v) => { v.clone() }
             } }
         }
@@ -45,4 +47,6 @@ pub mod errors {
             write!(f,"{}",self.error)
         }
     }
+
+    pub type TResult<T> = Result<T,TError>;
 }

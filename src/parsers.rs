@@ -1,7 +1,7 @@
 pub mod parsers {
     use std::{time,fmt};
     use chrono::{Local, DateTime, FixedOffset, ParseError, NaiveTime, NaiveDate, Datelike, TimeZone, Timelike, Utc, Duration};
-    use crate::errors::errors::{TError, TErrorKind};
+    use crate::errors::errors::{TError, TErrorKind, TResult};
     use std::ops::Add;
 
     pub struct DateParser {
@@ -19,7 +19,7 @@ pub mod parsers {
             }
         }
 
-        pub fn parser(&mut self, date_format:&str) -> Result<(),TError> {
+        pub fn parser(&mut self, date_format:&str) -> TResult<()> {
             let mut date_split = date_format.split(" ").collect::<Vec<&str>>();
             if date_split.len() < 2 {
                 return Err(TError::new(TErrorKind::BadFormat)); // 格式错误
@@ -63,7 +63,7 @@ pub mod parsers {
         }
     }
 
-    fn next_date_time(year:i32, month:u32, day:u32, time_format:&str) -> Result<DateTime<Local>,TError> {
+    fn next_date_time(year:i32, month:u32, day:u32, time_format:&str) -> TResult<DateTime<Local>> {
         let vt = NaiveTime::parse_from_str(time_format, "%T");
         match vt {
             Ok(time_tt) => {
@@ -77,7 +77,7 @@ pub mod parsers {
         }
     }
 
-    fn next_date_timeUtc(year:i32, month:u32, day:u32, time_format:&str) -> Result<DateTime<Utc>,TError> {
+    fn next_date_timeUtc(year:i32, month:u32, day:u32, time_format:&str) -> TResult<DateTime<Utc>> {
         let vt = NaiveTime::parse_from_str(time_format, "%T");
         match vt {
             Ok(time_tt) => {
@@ -92,7 +92,7 @@ pub mod parsers {
     }
 
     // time 00:00:00 get now time
-    pub fn atNowTime(time_format:&str) -> Result<DateTime<Local>,TError> {
+    fn atNowTime(time_format:&str) -> TResult<DateTime<Local>> {
         let now_time = Local::now();
         let vt = NaiveTime::parse_from_str(time_format, "%T");
         match vt {
@@ -107,7 +107,7 @@ pub mod parsers {
         }
     }
 
-    pub fn atUtcNowTime(time_format:&str) -> Result<DateTime<Utc>,TError> {
+    fn atUtcNowTime(time_format:&str) -> TResult<DateTime<Utc>> {
         let now_time = Utc::now();
         let vt = NaiveTime::parse_from_str(time_format, "%T");
         match vt {
@@ -136,7 +136,7 @@ pub mod parsers {
     /// let next_day = parsers::parser_next("Day 05::00:00").unwrap();
     /// let next_day2 = parsers::parser_next("Week 1 05:00:00").unwrap();
     /// ```
-    pub fn parser_next(timeStr:&str) -> Result<chrono::DateTime<Local>,TError> {
+    pub fn parser_next(timeStr:&str) -> TResult<chrono::DateTime<Local>> {
         let mut date_pv = DateParser::new();
         date_pv.parser(timeStr)?; //分析分析数据
 
@@ -204,7 +204,7 @@ pub mod parsers {
     /// let next_day = parsers::parser_timestamp("Day 05::00:00").unwrap();
     /// let next_day2 = parsers::parser_timestamp("Week 1 05:00:00").unwrap();
     /// ```
-    pub fn parser_timestamp(timeStr:&str) -> Result<i64,TError> {
+    pub fn parser_timestamp(timeStr:&str) -> TResult<i64> {
         let date_now = parser_next(timeStr)?;
         Ok(date_now.timestamp())
     }
@@ -223,7 +223,7 @@ pub mod parsers {
     /// let next_day = parsers::parser_nextUtc("Day 05::00:00").unwrap();
     /// let next_day2 = parsers::parser_nextUtc("Week 1 05:00:00").unwrap();
     /// ```
-    pub fn parser_nextUtc(timeStr:&str) -> Result<chrono::DateTime<Utc>,TError> {
+    pub fn parser_nextUtc(timeStr:&str) -> TResult<chrono::DateTime<Utc>> {
         let mut date_pv = DateParser::new();
         date_pv.parser(timeStr)?; //分析分析数据
 
@@ -291,21 +291,15 @@ pub mod parsers {
     /// let next_day = parsers::parser_timestampUtc("Day 05::00:00").unwrap();
     /// let next_day2 = parsers::parser_timestampUtc("Week 1 05:00:00").unwrap();
     /// ```
-    pub fn parser_timestampUtc(timeStr:&str) -> Result<i64,TError> {
+    pub fn parser_timestampUtc(timeStr:&str) -> TResult<i64> {
         let date_now = parser_nextUtc(timeStr)?;
         Ok(date_now.timestamp())
     }
-}
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::parsers::parsers::{getMonthDay, atNowTime, parser_next, parser_timestamp, parser_nextUtc, parser_timestampUtc};
-    use chrono::Local;
-
+    // 内部函数测试
     #[test]
     fn test_parser_date() {
-        let mut datep = parsers::DateParser::new();
+        let mut datep = DateParser::new();
         datep.parser("Day 00:00:00");
         assert_eq!(datep.action,"day");
         assert_eq!(datep.clock,"00:00:00");
@@ -325,6 +319,13 @@ mod tests {
         println!("fmt:{}",timeFtm.format("%Y-%m-%d %H:%M:%S"));
         println!("unix time:{}",timeFtm.timestamp())
     }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::parsers::parsers::{getMonthDay, parser_next, parser_timestamp, parser_nextUtc, parser_timestampUtc};
+    use chrono::Local;
 
     #[test]
     fn test_parser_next() {
