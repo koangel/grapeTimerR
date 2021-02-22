@@ -43,7 +43,7 @@ pub mod timer {
                 id_seed:1, // 起始ID
                 id_type:IDMode::SequenceId,
            })),
-            thread_pool:Arc::new(Mutex::new(TaskPool::new(time::Duration::from_secs(1),5)))
+            thread_pool:Arc::new(Mutex::new(TaskPool::new(time::Duration::from_secs(1),num_cpus::get())))
          };
     }
 
