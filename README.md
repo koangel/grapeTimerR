@@ -8,8 +8,8 @@
 ```
 [![made-with-Rust](https://img.shields.io/badge/made%20with-rust-red)](https://www.rust-lang.org/)
 [![Open Source Love svg2](https://badges.frapsoft.com/os/v2/open-source.svg?v=103)](https://github.com/ellerbrock/open-source-badges/)
-[![crates.io](https://img.shields.io/badge/crates.io-0.1.0-orange.svg)](https://crates.io/crates/grapeTimerR)
-[![docs.rs](https://img.shields.io/badge/docs-0.1.0-blue.svg)](https://docs.rs/crate/grapeTimerR/0.1.0)
+[![crates.io](https://img.shields.io/badge/crates.io-grapeTimerR-orange.svg)](https://crates.io/crates/grapeTimerR)
+[![docs.rs](https://img.shields.io/badge/docs-grapeTimerR-blue.svg)](https://docs.rs/grapeTimerR)
 
 ## **简介 Intro**
 
@@ -22,6 +22,7 @@ grapeTimer的Rust版本，提供相同功能以及相同类型的服务。
 [![grapeTimerR](https://img.shields.io/badge/grapeTimerR-rust-blue)](https://github.com/koangel/grapeTimerR)
 
 ## **功能 Feature**
+- 纯异步的代码执行(Pure async code)
 - 通过命令格式创建`std::chrono::Datetime`(Created by date format)
 - 简洁的Api格式，轻度且可拆分的函数库(Simple Api, light and detachable library)
 - 快速创建调度器(Quickly create a scheduler)
