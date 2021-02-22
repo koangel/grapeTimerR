@@ -1,13 +1,17 @@
 [package]
 name = "grapeTimerR"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["jackliu100@gmail.com <jackliu100@gmail.com>"]
 edition = "2018"
 description = "grape schedule for rust"
 documentation = "https://docs.rs/grapeTimerR/0.1.0/grapeTimerR/index.html"
+readme = "Readme.md"
 license = "Apache-2.0"
 license-file = "LICENSE"
 repository = "https://github.com/koangel/grapeTimerR"
+keywords = [
+    "schedule","timer","grape"
+]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [dependencies]
@@ -16,4 +20,5 @@ lazy_static = "1.4.0"
 num_cpus = "1.0"
 crossbeam = "0.8.0"
 tokio = {version = "1.2.0",features = ["rt","rt-multi-thread","time"]}
-
+log = "0.4"
+simple-log = "1.0.1"

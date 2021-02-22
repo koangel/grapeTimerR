@@ -1,4 +1,6 @@
+
 pub mod threads {
+    use log::*;
     use tokio::{runtime,time};
     use crossbeam::channel::{unbounded,Receiver,Sender};
     use std::{ thread,sync::Mutex,sync::Once,time::Duration,
@@ -17,6 +19,7 @@ pub mod threads {
         rt:tokio::runtime::Runtime,
         stop_tx:Sender<u64>,
         stop_rx:Receiver<u64>,
+        debug:bool,
     }
 
     impl TaskPool {
@@ -31,10 +34,12 @@ pub mod threads {
                     .unwrap(),
                 stop_tx: tx,
                 stop_rx: rx,
+                debug:false,
             }
         }
 
-        pub fn rebuild(&mut self,count:i32) {
+        pub fn rebuild(&mut self,count:i32,debug:bool) {
+            self.debug = debug;
             self.rt = runtime::Builder::new_multi_thread()
                 .worker_threads(count as usize)
                 .enable_all()
@@ -52,6 +57,7 @@ pub mod threads {
         pub fn spwan(&self, t:Arc<dyn TaskAction>) {
             let task = t.clone();
             let rx_spwan = self.stop_rx.clone();
+            let debug = self.debug;
 
             self.rt.spawn(async move {
                 let mut r_count = 0;
@@ -62,7 +68,10 @@ pub mod threads {
                         let now_time = Local::now().timestamp();
                         let next_tick = parser_timestamp(task.date_format()).unwrap();
 
-                        println!("next tick sec:{}",(next_tick - now_time) as u64);
+                        if debug {
+                            debug!("make next tick sec:{} id:{}",(next_tick - now_time) as u64,task.id());
+                        }
+
                         // 等待一下，让出这个线程
                         time::sleep(time::Duration::from_secs( (next_tick - now_time) as u64 )).await;
                     }else {
@@ -70,15 +79,24 @@ pub mod threads {
                             break // 异常的任务
                         }
 
-                        println!("next ticker sec:{}",(task.tick()) as u64);
+                        if debug {
+                            debug!("make next ticker sec:{} id:{}",(task.tick()) as u64,task.id());
+                        }
+
                         time::sleep(time::Duration::from_millis( task.tick() )).await;
                     }
 
                     if max_count  > 0 && r_count >= max_count {
+                        if debug {
+                            debug!("task finished:{}",task.id());
+                        }
                         break; // 结束这个任务
                     }
 
                     r_count+=1;//计数
+                    if debug {
+                        debug!("task run count:{} id:{}",r_count,task.id());
+                    }
                     task.execute(task.id());
 
                     // 检测一下，是不是被强制结束了
@@ -88,6 +106,7 @@ pub mod threads {
                         Ok(val) => {
                             if task.id() == val {
                                 // 结束这个任务
+                                debug!("task stopped:{}",task.id());
                                 return;
                             }
                         },

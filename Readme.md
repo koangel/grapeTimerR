@@ -67,6 +67,25 @@ let next_dayUtc = parsers::parser_nextUtc("Day 05::00:00").unwrap();
 let next_dayTimeUtc = parsers::parser_timestampUtc("Day 05::00:00").unwrap();
 ```
 
+**init system**
+
+```rust
+ use grapeTimerR::{timer::Config,IDMode, timer};
+
+ let conf = Config{
+         // output log info
+         debug: true,
+         debug_log:String::from("logs/grapeTimer.log"),
+         thread_count: 10,
+         // 初始化全局ID的起始ID，可以自行控制
+         // Initialize the starting ID of the global ID, which can be controlled by yourself
+         id_seed: 1,
+         id_type: IDMode::SequenceId
+     };
+
+ timer::init_schedule(conf);
+```
+
 **add ticker**
 
 ```rust

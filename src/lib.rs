@@ -16,6 +16,8 @@ pub mod timer {
     use lazy_static::*;
     use crate::thread::threads::{TaskPool};
     use crate::uuid::uuid::{set_seed, next_timestamp_id, next_big_id};
+    use simple_log;
+    use simple_log::LogConfigBuilder;
 
     #[derive(Clone)]
     struct InterData {
@@ -23,9 +25,10 @@ pub mod timer {
         thread_pool:Arc<Mutex<TaskPool>>,
     }
 
-    #[derive(Copy, Clone)]
+    #[derive(Clone)]
     pub struct Config {
         pub debug:bool,
+        pub debug_log:String,
         pub thread_count:i32,
         pub id_seed:i64, // 起始ID
         pub id_type:IDMode,
@@ -35,6 +38,7 @@ pub mod timer {
         static ref Inter:InterData = InterData{
            config:Arc::new(Mutex::new(Config{
                 debug:false,
+                debug_log:String::new(),
                 thread_count:4,
                 id_seed:1, // 起始ID
                 id_type:IDMode::SequenceId,
@@ -58,7 +62,9 @@ pub mod timer {
     /// use grapeTimerR::{timer::Config,IDMode, timer};
     ///
     /// let conf = Config{
-    ///         debug: false, // Not used yet, reserved
+    ///         // output log info
+    ///         debug: false,
+    ///         debug_log:String::from("logs/grapeTimer.log"),
     ///         thread_count: 10,
     ///         // 初始化全局ID的起始ID，可以自行控制
     ///         // Initialize the starting ID of the global ID, which can be controlled by yourself
@@ -75,7 +81,23 @@ pub mod timer {
         l_config.debug = conf.debug;
         l_config.id_type = conf.id_type;
 
-        Inter.thread_pool.lock().unwrap().rebuild(conf.thread_count);
+        let config = LogConfigBuilder::builder()
+            .path(conf.debug_log)
+            .size(1 * 100)
+            .roll_count(10)
+            .level("debug")
+            .output_file()
+            .output_console()
+            .build();
+        let r = simple_log::new(config);
+        match r {
+            Err(e) => {
+                return Err(TError::new(TErrorKind::Other(e)));
+            }
+            Ok(v) => {}
+        }
+
+        Inter.thread_pool.lock().unwrap().rebuild(conf.thread_count,conf.debug);
         set_seed(l_config.id_seed);
         Ok(())
     }
