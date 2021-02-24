@@ -54,7 +54,7 @@ pub mod threads {
             }
         }
 
-        pub fn spwan(&self, t:Arc<dyn TaskAction>) {
+        pub fn spawn(&self, t:Arc<dyn TaskAction>) {
             let task = t.clone();
             let rx_spwan = self.stop_rx.clone();
             let debug = self.debug;

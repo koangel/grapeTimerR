@@ -90,13 +90,13 @@ let next_dayTimeUtc = parsers::parser_timestampUtc("Day 05::00:00").unwrap();
 **add ticker**
 
 ```rust
-    fn executer_task(id:u64) {
+    fn executor_task(id:u64) {
         println!("on function mode:{}",chrono::Local::now().to_rfc2822());
     }
     // 使用函数方式执行代码 Use function to execute code
-    timer::spwan_ticker(time::Duration::from_millis(5000),2,executer_task);
+    timer::spawn_ticker(time::Duration::from_millis(5000),2,executor_task);
     // 使用闭包模式 Use closure function
-    timer::spwan_ticker(time::Duration::from_millis(5000),2,|x| {
+    timer::spawn_ticker(time::Duration::from_millis(5000),2,|x| {
         println!("on ticker:{}",chrono::Local::now().to_rfc2822());
     });
 ```
@@ -143,14 +143,14 @@ impl TaskAction for ExempleAction {
 
     // 使用trait任务，可以简化部分实际逻辑
     // Using trait tasks can simplify part of the actual logic
-    timer::spwan_trait(Arc::new(ExempleAction{}));
+    timer::spawn_trait(Arc::new(ExempleAction{}));
 
 ```
 
 **add date**
 
 ```rust
-timer::spwan_date("day 19:21:50",1,|id| {
+timer::spawn_date("day 19:21:50",1,|id| {
     println!("on date:{}",chrono::Local::now().to_rfc2822());
 });
 ```
