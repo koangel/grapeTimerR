@@ -166,7 +166,7 @@ pub mod timer {
     ///         println!("on ticker:{}",chrono::Local::now().to_rfc2822());
     ///     });
     /// ```
-    pub fn spawn_trait(tick:time::Duration, loopCount:i32, f: impl Fn(u64) + Send+Sync + 'static) -> TResult<u64> {
+    pub fn spawn_ticker(tick:time::Duration, loopCount:i32, f: impl Fn(u64) + Send+Sync + 'static) -> TResult<u64> {
         let task_action =  ClosuresAction::new("", next_uuid(), loopCount, tick, f);
         let r = Inter.thread_pool.lock();
         match r {
