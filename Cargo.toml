@@ -1,6 +1,6 @@
 [package]
 name = "grapeTimerR"
-version = "0.1.2"
+version = "0.1.3"
 authors = ["jackliu100@gmail.com <jackliu100@gmail.com>"]
 edition = "2018"
 description = "grape schedule for rust"
