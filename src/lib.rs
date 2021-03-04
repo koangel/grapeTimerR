@@ -276,7 +276,7 @@ pub mod timer {
      /// ```
     pub fn block_on_rt<F>(future: F) -> TResult<()>
          where
-             F: Future + Send + 'static,
+             F: Future,
              F::Output: Send + 'static,
      {
          let r =Inter.thread_pool.lock();
