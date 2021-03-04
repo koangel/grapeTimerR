@@ -64,6 +64,7 @@ pub mod timer {
     use crate::uuid::uuid::{set_seed, next_timestamp_id, next_big_id};
     use simple_log;
     use simple_log::LogConfigBuilder;
+    use std::future::Future;
 
     #[derive(Clone)]
     struct InterData {
@@ -259,6 +260,56 @@ pub mod timer {
                 let task_id = task_action.id();
                 v.spawn(Arc::new(task_action));
                 Ok(task_id)
+            }
+        }
+    }
+
+     /// Used to use asynchronous tasks in Timer [用于在代码中使用异步任务]
+     ///
+     /// # Examples
+     ///
+     /// ```
+     /// use grapeTimerR::timer;
+     /// timer::block_on_rt(async {
+     ///     println!("block on");
+     /// });
+     /// ```
+    pub fn block_on_rt<F>(future: F) -> TResult<()>
+         where
+             F: Future + Send + 'static,
+             F::Output: Send + 'static,
+     {
+         let r =Inter.thread_pool.lock();
+         match r {
+             Err(e) => { Err(TError::new(TErrorKind::Other(e.to_string()))) },
+             Ok(mut v) => {
+                 v.block_on(future);
+                 Ok(())
+             }
+         }
+     }
+
+    /// Used to use asynchronous tasks in Timer [用于在代码中使用异步任务]
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use grapeTimerR::timer;
+    /// timer::spawn_rt(async {
+    ///     println!("spawn on");
+    /// });
+    /// ```
+    pub fn spawn_rt<F>(future: F) -> TResult<()>
+        where
+            F: Future + Send + 'static,
+            F::Output: Send + 'static,
+    {
+        let r =Inter.thread_pool.lock();
+        match r {
+            Err(e) => { Err(TError::new(TErrorKind::Other(e.to_string()))) },
+            Ok(mut v) => {
+                v.spawn_rt(future);
+                Ok(())
             }
         }
     }

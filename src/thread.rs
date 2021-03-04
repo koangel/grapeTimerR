@@ -14,6 +14,8 @@ pub mod threads {
     use crate::uuid::uuid::next_big_id;
     use crate::parsers::parsers::parser_timestamp;
     use std::sync::mpsc::channel;
+    use std::future::Future;
+    use tokio::task::JoinHandle;
 
     pub struct TaskPool {
         rt:tokio::runtime::Runtime,
@@ -52,6 +54,22 @@ pub mod threads {
                 Err(e) => { Err(TError::new(TErrorKind::Other(e.to_string()))) }
                 Ok(_) => { Ok(()) }
             }
+        }
+
+        pub fn block_on<F>(&self,future: F) -> F::Output
+            where
+                F: Future + Send + 'static,
+                F::Output: Send + 'static,
+        {
+            self.rt.block_on(future)
+        }
+
+        pub fn spawn_rt<F>(&self,future: F) -> JoinHandle<F::Output>
+            where
+                F: Future + Send + 'static,
+                F::Output: Send + 'static,
+        {
+            self.rt.spawn(future)
         }
 
         pub fn spawn(&self, t:Arc<dyn TaskAction>) {
